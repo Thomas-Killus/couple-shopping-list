@@ -86,7 +86,7 @@ function App() {
       <div className="container">
         <header>
           <h1>🛒 Our Shopping List</h1>
-          <p className="subtitle">Shopping together, made easy</p>
+          <p className="subtitle">brauchen wir noch Bier?</p>
         </header>
 
         <form onSubmit={addItem} className="add-item-form">
@@ -98,7 +98,7 @@ function App() {
             className="input"
           />
           <button type="submit" className="btn btn-primary">
-            Add
+            Bitte
           </button>
         </form>
 
@@ -147,7 +147,7 @@ function App() {
         </ul>
 
         <footer className="footer">
-          <p>💜 Made with love for us</p>
+          <p>💜 und Mango?</p>
         </footer>
       </div>
     </div>
