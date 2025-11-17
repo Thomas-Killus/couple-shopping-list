@@ -218,16 +218,6 @@ function Chores() {
     <div className="chores-container">
       <header className="chores-header">
         <h2>🧹 Chores</h2>
-        <div className="scores">
-          <div className="score-card">
-            <span className="score-name">Thomas</span>
-            <span className="score-points">{scores.Thomas || 0} pts</span>
-          </div>
-          <div className="score-card">
-            <span className="score-name">Chantale</span>
-            <span className="score-points">{scores.Chantale || 0} pts</span>
-          </div>
-        </div>
       </header>
 
       <button 

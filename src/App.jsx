@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import ShoppingList from './ShoppingList';
 import Chores from './Chores';
 import Expenses from './Expenses';
+import Stats from './Stats';
 import './App.css';
 
 function App() {
@@ -14,9 +15,9 @@ function App() {
     { id: 'shopping', label: '🛒 Shopping', component: ShoppingList },
     { id: 'chores', label: '🧹 Chores', component: Chores },
     { id: 'expenses', label: '💰 Expenses', component: Expenses },
+    { id: 'stats', label: '📊 Stats', component: Stats },
     // Future tabs can be added here:
     // { id: 'recipes', label: '🍳 Recipes', component: Recipes },
-    // { id: 'stats', label: '📊 Stats', component: Stats },
   ];
 
   const currentTabIndex = tabs.findIndex(tab => tab.id === activeTab);
