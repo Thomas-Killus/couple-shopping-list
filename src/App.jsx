@@ -50,10 +50,24 @@ function App() {
     
     // Determine swipe direction on first move
     if (swipeDirection === null) {
-      if (Math.abs(diffX) > Math.abs(diffY)) {
-        setSwipeDirection('horizontal');
+      const absDiffX = Math.abs(diffX);
+      const absDiffY = Math.abs(diffY);
+      
+      // Only engage horizontal swiping if movement is clearly more horizontal
+      // Require at least 10px of movement to determine direction
+      if (absDiffX > 10 || absDiffY > 10) {
+        if (absDiffX > absDiffY * 1.5) {
+          // Clearly horizontal - engage swipe
+          setSwipeDirection('horizontal');
+        } else {
+          // Vertical or unclear - let native scroll handle it
+          setSwipeDirection('vertical');
+          setTouchStart(null);
+          return;
+        }
       } else {
-        setSwipeDirection('vertical');
+        // Not enough movement yet
+        return;
       }
     }
     
@@ -72,9 +86,9 @@ function App() {
         // Apply resistance when at boundaries
         setDragOffset(diffX * 0.3);
       }
+      
+      setTouchEnd(currentTouch);
     }
-    
-    setTouchEnd(currentTouch);
   };
 
   const onTouchEnd = () => {

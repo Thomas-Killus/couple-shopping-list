@@ -1,5 +1,8 @@
 .app {
   width: 100%;
+  /* Ensure the app fills the viewport so inner areas can scroll independently */
+  min-height: 100vh;
+  height: 100dvh; /* modern mobile browsers */
 }
 
 .container {
@@ -7,7 +10,8 @@
   border-radius: 20px;
   padding: 2rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-height: 90vh;
+  /* Fix the container height so inner content area can scroll */
+  height: 90vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -53,7 +57,6 @@
   position: relative;
   width: 100%;
   min-height: 0; /* Important for flex children with overflow */
-  touch-action: pan-y; /* Allow vertical scrolling */
 }
 
 .tab-slider {
@@ -61,12 +64,10 @@
   height: 100%;
   transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: transform;
-  touch-action: pan-y; /* Allow vertical scrolling */
 }
 
 .tab-slider.dragging {
   transition: none;
-  touch-action: none; /* Disable vertical scroll during horizontal drag */
 }
 
 /* Individual Tab Content */
@@ -78,6 +79,8 @@
   overflow-x: hidden;
   padding-right: 0.5rem;
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  /* Keep scroll within the tab content (don’t bubble to page) */
+  overscroll-behavior: contain;
 }
 
 /* Custom scrollbar */
