@@ -13,6 +13,7 @@ const PRESET_CHORES = [
   { name: 'Wäsche aufhängen', points: 5 },
   { name: 'Wäsche abhängen', points: 5 },
   { name: 'Spülmaschine ausräumen', points: 5 },
+  { name: 'Gießen', points: 5, recurring: true, recurDays: 6 },
 ];
 
 function Chores() {
@@ -60,6 +61,52 @@ function Chores() {
 
     return () => unsubscribe();
   }, []);
+
+  // Check for recurring chores that need to be reactivated
+  useEffect(() => {
+    const recurringRef = ref(database, 'chores/recurring');
+    
+    const unsubscribe = onValue(recurringRef, (snapshot) => {
+      const recurringData = snapshot.val();
+      const now = Date.now();
+      
+      PRESET_CHORES.forEach(preset => {
+        if (preset.recurring) {
+          const choreKey = sanitizeChoreKey(preset.name);
+          const lastCompleted = recurringData?.[choreKey];
+          const daysSinceCompletion = lastCompleted ? (now - lastCompleted) / (1000 * 60 * 60 * 24) : 999;
+          
+          // Check if this recurring chore is already active
+          const isActive = activeChores.some(chore => chore.name === preset.name);
+          
+          // If enough days have passed and it's not already active, add it
+          if (daysSinceCompletion >= preset.recurDays && !isActive) {
+            const choresRef = ref(database, 'chores/active');
+            push(choresRef, {
+              name: preset.name,
+              points: preset.points,
+              timestamp: now,
+              recurring: true
+            });
+          }
+        }
+      });
+    });
+
+    return () => unsubscribe();
+  }, [activeChores]);
+
+  // Sanitize chore name for use as Firebase key
+  const sanitizeChoreKey = (choreName) => {
+    // Check if it's a preset chore
+    const preset = PRESET_CHORES.find(c => c.name === choreName);
+    if (preset) {
+      // Use a clean key for preset chores
+      return preset.name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+    }
+    // For custom chores, use generic "custom" key
+    return 'custom';
+  };
 
   // Add new chore
   const addChore = () => {
@@ -138,20 +185,18 @@ function Chores() {
       });
     }
 
+    // Update last completion time for recurring chores
+    const preset = PRESET_CHORES.find(c => c.name === chore.name);
+    if (preset?.recurring) {
+      const choreKey = sanitizeChoreKey(chore.name);
+      const recurringRef = ref(database, 'chores/recurring');
+      update(recurringRef, {
+        [choreKey]: Date.now()
+      });
+    }
+
     // Close modal
     setSelectedChore(null);
-  };
-
-  // Sanitize chore name for use as Firebase key
-  const sanitizeChoreKey = (choreName) => {
-    // Check if it's a preset chore
-    const preset = PRESET_CHORES.find(c => c.name === choreName);
-    if (preset) {
-      // Use a clean key for preset chores
-      return preset.name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-    }
-    // For custom chores, use generic "custom" key
-    return 'custom';
   };
 
   // Delete chore without completing

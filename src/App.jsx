@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import ShoppingList from './ShoppingList';
 import Chores from './Chores';
+import Expenses from './Expenses';
 import './App.css';
 
 function App() {
@@ -12,8 +13,8 @@ function App() {
   const tabs = [
     { id: 'shopping', label: '🛒 Shopping', component: ShoppingList },
     { id: 'chores', label: '🧹 Chores', component: Chores },
+    { id: 'expenses', label: '💰 Expenses', component: Expenses },
     // Future tabs can be added here:
-    // { id: 'money', label: '💰 Money', component: Money },
     // { id: 'recipes', label: '🍳 Recipes', component: Recipes },
     // { id: 'stats', label: '📊 Stats', component: Stats },
   ];
