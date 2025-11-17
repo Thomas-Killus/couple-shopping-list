@@ -11,6 +11,7 @@ function App() {
   const [touchEnd, setTouchEnd] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
+  const [swipeDirection, setSwipeDirection] = useState(null); // 'horizontal' or 'vertical'
   const containerRef = useRef(null);
 
   const tabs = [
@@ -29,38 +30,62 @@ function App() {
 
   const onTouchStart = (e) => {
     setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-    setIsDragging(true);
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    });
+    setSwipeDirection(null);
   };
 
   const onTouchMove = (e) => {
     if (!touchStart) return;
     
-    const currentTouch = e.targetTouches[0].clientX;
-    const diff = currentTouch - touchStart;
+    const currentTouch = {
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    };
     
-    // Prevent swiping beyond boundaries
-    const canSwipeLeft = currentTabIndex < tabs.length - 1;
-    const canSwipeRight = currentTabIndex > 0;
+    const diffX = currentTouch.x - touchStart.x;
+    const diffY = currentTouch.y - touchStart.y;
     
-    if ((diff < 0 && canSwipeLeft) || (diff > 0 && canSwipeRight)) {
-      setDragOffset(diff);
-    } else {
-      // Apply resistance when at boundaries
-      setDragOffset(diff * 0.3);
+    // Determine swipe direction on first move
+    if (swipeDirection === null) {
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        setSwipeDirection('horizontal');
+      } else {
+        setSwipeDirection('vertical');
+      }
+    }
+    
+    // Only handle horizontal swipes
+    if (swipeDirection === 'horizontal') {
+      e.preventDefault(); // Prevent scrolling when swiping horizontally
+      setIsDragging(true);
+      
+      // Prevent swiping beyond boundaries
+      const canSwipeLeft = currentTabIndex < tabs.length - 1;
+      const canSwipeRight = currentTabIndex > 0;
+      
+      if ((diffX < 0 && canSwipeLeft) || (diffX > 0 && canSwipeRight)) {
+        setDragOffset(diffX);
+      } else {
+        // Apply resistance when at boundaries
+        setDragOffset(diffX * 0.3);
+      }
     }
     
     setTouchEnd(currentTouch);
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) {
+    if (!touchStart || !touchEnd || swipeDirection !== 'horizontal') {
       setIsDragging(false);
       setDragOffset(0);
+      setSwipeDirection(null);
       return;
     }
     
-    const distance = touchStart - touchEnd;
+    const distance = touchStart.x - touchEnd.x;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
@@ -77,6 +102,7 @@ function App() {
     setDragOffset(0);
     setTouchStart(null);
     setTouchEnd(null);
+    setSwipeDirection(null);
   };
 
   return (

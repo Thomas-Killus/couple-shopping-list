@@ -76,14 +76,16 @@ function Expenses() {
   // Add expense
   const addExpense = (e) => {
     e.preventDefault();
-    if (!amount || parseFloat(amount) <= 0 || !description.trim()) return;
+    if (!amount || parseFloat(amount) <= 0) return;
+
+    const finalDescription = description.trim() || `${paidBy} war zu faul sich was auszudenken`;
 
     const expensesRef = ref(database, 'expenses');
     push(expensesRef, {
       amount: parseFloat(amount).toFixed(2),
       paidBy,
       forWhom,
-      description: description.trim(),
+      description: finalDescription,
       timestamp: Date.now()
     });
 
@@ -130,17 +132,15 @@ function Expenses() {
         {thomasBalance === 0 && chantaleBalance === 0 ? (
           <div className="balance-even">
             <span className="balance-icon">✨</span>
-            <span>You're all even!</span>
+            <span>Ihr seid quitt!</span>
           </div>
         ) : thomasBalance > 0 ? (
           <div className="balance-owed">
-            <strong>Chantale</strong> owes <strong>Thomas</strong>
-            <div className="balance-amount">€{Math.abs(thomasBalance).toFixed(2)}</div>
+            <strong>Thomas</strong> hat <strong className="balance-amount">€{(Math.abs(thomasBalance) * 2).toFixed(2)}</strong> mehr gezahlt
           </div>
         ) : (
           <div className="balance-owed">
-            <strong>Thomas</strong> owes <strong>Chantale</strong>
-            <div className="balance-amount">€{Math.abs(chantaleBalance).toFixed(2)}</div>
+            <strong>Chantale</strong> hat <strong className="balance-amount">€{(Math.abs(chantaleBalance) * 2).toFixed(2)}</strong> mehr gezahlt
           </div>
         )}
       </div>

@@ -64,6 +64,8 @@ function Chores() {
 
   // Check for recurring chores that need to be reactivated
   useEffect(() => {
+    if (loading) return; // Don't run until chores are loaded
+    
     const recurringRef = ref(database, 'chores/recurring');
     
     const unsubscribe = onValue(recurringRef, (snapshot) => {
@@ -74,27 +76,42 @@ function Chores() {
         if (preset.recurring) {
           const choreKey = sanitizeChoreKey(preset.name);
           const lastCompleted = recurringData?.[choreKey];
-          const daysSinceCompletion = lastCompleted ? (now - lastCompleted) / (1000 * 60 * 60 * 24) : 999;
           
           // Check if this recurring chore is already active
           const isActive = activeChores.some(chore => chore.name === preset.name);
           
-          // If enough days have passed and it's not already active, add it
-          if (daysSinceCompletion >= preset.recurDays && !isActive) {
-            const choresRef = ref(database, 'chores/active');
-            push(choresRef, {
-              name: preset.name,
-              points: preset.points,
-              timestamp: now,
-              recurring: true
-            });
+          if (!isActive) {
+            // Only add if never completed OR enough days have passed
+            if (!lastCompleted) {
+              // Never completed - add it once
+              const choresRef = ref(database, 'chores/active');
+              push(choresRef, {
+                name: preset.name,
+                points: preset.points,
+                timestamp: now,
+                recurring: true
+              });
+            } else {
+              const daysSinceCompletion = (now - lastCompleted) / (1000 * 60 * 60 * 24);
+              
+              // Only add if enough days have passed
+              if (daysSinceCompletion >= preset.recurDays) {
+                const choresRef = ref(database, 'chores/active');
+                push(choresRef, {
+                  name: preset.name,
+                  points: preset.points,
+                  timestamp: now,
+                  recurring: true
+                });
+              }
+            }
           }
         }
       });
     });
 
     return () => unsubscribe();
-  }, [activeChores]);
+  }, [activeChores, loading]);
 
   // Sanitize chore name for use as Firebase key
   const sanitizeChoreKey = (choreName) => {
