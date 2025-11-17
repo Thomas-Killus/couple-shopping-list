@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ShoppingList from './ShoppingList';
 import Chores from './Chores';
 import './App.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState('shopping');
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const containerRef = useRef(null);
 
   const tabs = [
     { id: 'shopping', label: '🛒 Shopping', component: ShoppingList },
@@ -15,11 +18,48 @@ function App() {
     // { id: 'stats', label: '📊 Stats', component: Stats },
   ];
 
-  const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component;
+  const currentTabIndex = tabs.findIndex(tab => tab.id === activeTab);
+  const ActiveComponent = tabs[currentTabIndex]?.component;
+
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && currentTabIndex < tabs.length - 1) {
+      // Swipe left - go to next tab
+      setActiveTab(tabs[currentTabIndex + 1].id);
+    }
+    
+    if (isRightSwipe && currentTabIndex > 0) {
+      // Swipe right - go to previous tab
+      setActiveTab(tabs[currentTabIndex - 1].id);
+    }
+  };
 
   return (
     <div className="app">
-      <div className="container">
+      <div 
+        className="container"
+        ref={containerRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         {/* Tab Navigation */}
         <nav className="tab-nav">
           {tabs.map(tab => (

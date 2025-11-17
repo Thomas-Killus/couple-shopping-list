@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ref, push, onValue, update, remove } from 'firebase/database';
+import { ref, push, onValue, update, remove, increment } from 'firebase/database';
 import { database } from './firebase';
 import './Chores.css';
 
@@ -23,6 +23,7 @@ function Chores() {
   const [customChore, setCustomChore] = useState('');
   const [customPoints, setCustomPoints] = useState(5);
   const [loading, setLoading] = useState(true);
+  const [selectedChore, setSelectedChore] = useState(null);
 
   // Load active chores
   useEffect(() => {
@@ -120,12 +121,44 @@ function Chores() {
         [person]: (scores[person] || 0) + chore.points
       });
     }
+
+    // Update counters
+    const countersRef = ref(database, 'chores/counters');
+    const choreKey = sanitizeChoreKey(chore.name);
+    
+    if (person === 'Both') {
+      update(countersRef, {
+        [`thomas_${choreKey}`]: increment(1),
+        [`chantale_${choreKey}`]: increment(1)
+      });
+    } else {
+      const personKey = person.toLowerCase();
+      update(countersRef, {
+        [`${personKey}_${choreKey}`]: increment(1)
+      });
+    }
+
+    // Close modal
+    setSelectedChore(null);
+  };
+
+  // Sanitize chore name for use as Firebase key
+  const sanitizeChoreKey = (choreName) => {
+    // Check if it's a preset chore
+    const preset = PRESET_CHORES.find(c => c.name === choreName);
+    if (preset) {
+      // Use a clean key for preset chores
+      return preset.name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+    }
+    // For custom chores, use generic "custom" key
+    return 'custom';
   };
 
   // Delete chore without completing
   const deleteChore = (id) => {
     const choreRef = ref(database, `chores/active/${id}`);
     remove(choreRef);
+    setSelectedChore(null);
   };
 
   if (loading) {
@@ -208,45 +241,63 @@ function Chores() {
           </div>
         ) : (
           activeChores.map(chore => (
-            <div key={chore.id} className="chore-item">
-              <div className="chore-info">
-                <span className="chore-name">{chore.name}</span>
-                <span className="chore-points">{chore.points} pts</span>
-              </div>
-              <div className="chore-actions">
-                <button
-                  onClick={() => completeChore(chore, 'Thomas')}
-                  className="btn-complete btn-thomas"
-                  title="Thomas did this"
-                >
-                  Thomas
-                </button>
-                <button
-                  onClick={() => completeChore(chore, 'Chantale')}
-                  className="btn-complete btn-chantale"
-                  title="Chantale did this"
-                >
-                  Chantale
-                </button>
-                <button
-                  onClick={() => completeChore(chore, 'Both')}
-                  className="btn-complete btn-both"
-                  title="We did this together"
-                >
-                  Both
-                </button>
-                <button
-                  onClick={() => deleteChore(chore.id)}
-                  className="btn-delete-chore"
-                  title="Delete chore"
-                >
-                  ✕
-                </button>
-              </div>
+            <div 
+              key={chore.id} 
+              className="chore-item"
+              onClick={() => setSelectedChore(chore)}
+            >
+              <span className="chore-name">{chore.name}</span>
+              <span className="chore-arrow">›</span>
             </div>
           ))
         )}
       </div>
+
+      {/* Modal for completing chore */}
+      {selectedChore && (
+        <div className="modal-overlay" onClick={() => setSelectedChore(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="modal-close"
+              onClick={() => setSelectedChore(null)}
+            >
+              ✕
+            </button>
+            
+            <h3 className="modal-title">{selectedChore.name}</h3>
+            <p className="modal-points">{selectedChore.points} points</p>
+            
+            <div className="modal-actions">
+              <p className="modal-question">Who completed this?</p>
+              <button
+                onClick={() => completeChore(selectedChore, 'Thomas')}
+                className="btn-complete btn-thomas"
+              >
+                Thomas
+              </button>
+              <button
+                onClick={() => completeChore(selectedChore, 'Chantale')}
+                className="btn-complete btn-chantale"
+              >
+                Chantale
+              </button>
+              <button
+                onClick={() => completeChore(selectedChore, 'Both')}
+                className="btn-complete btn-both"
+              >
+                Both
+              </button>
+            </div>
+
+            <button
+              onClick={() => deleteChore(selectedChore.id)}
+              className="btn-delete-modal"
+            >
+              Delete Chore
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
