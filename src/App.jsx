@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import ShoppingList from './ShoppingList';
 import Chores from './Chores';
 import Expenses from './Expenses';
@@ -9,6 +9,8 @@ function App() {
   const [activeTab, setActiveTab] = useState('shopping');
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
   const containerRef = useRef(null);
 
   const tabs = [
@@ -21,22 +23,42 @@ function App() {
   ];
 
   const currentTabIndex = tabs.findIndex(tab => tab.id === activeTab);
-  const ActiveComponent = tabs[currentTabIndex]?.component;
 
-  // Minimum swipe distance (in px)
-  const minSwipeDistance = 50;
+  // Minimum swipe distance (in px) to trigger a tab change
+  const minSwipeDistance = 80;
 
   const onTouchStart = (e) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
+    setIsDragging(true);
   };
 
   const onTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (!touchStart) return;
+    
+    const currentTouch = e.targetTouches[0].clientX;
+    const diff = currentTouch - touchStart;
+    
+    // Prevent swiping beyond boundaries
+    const canSwipeLeft = currentTabIndex < tabs.length - 1;
+    const canSwipeRight = currentTabIndex > 0;
+    
+    if ((diff < 0 && canSwipeLeft) || (diff > 0 && canSwipeRight)) {
+      setDragOffset(diff);
+    } else {
+      // Apply resistance when at boundaries
+      setDragOffset(diff * 0.3);
+    }
+    
+    setTouchEnd(currentTouch);
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd) {
+      setIsDragging(false);
+      setDragOffset(0);
+      return;
+    }
     
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
@@ -45,12 +67,16 @@ function App() {
     if (isLeftSwipe && currentTabIndex < tabs.length - 1) {
       // Swipe left - go to next tab
       setActiveTab(tabs[currentTabIndex + 1].id);
-    }
-    
-    if (isRightSwipe && currentTabIndex > 0) {
+    } else if (isRightSwipe && currentTabIndex > 0) {
       // Swipe right - go to previous tab
       setActiveTab(tabs[currentTabIndex - 1].id);
     }
+    
+    // Reset
+    setIsDragging(false);
+    setDragOffset(0);
+    setTouchStart(null);
+    setTouchEnd(null);
   };
 
   return (
@@ -58,9 +84,6 @@ function App() {
       <div 
         className="container"
         ref={containerRef}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
       >
         {/* Tab Navigation */}
         <nav className="tab-nav">
@@ -75,9 +98,25 @@ function App() {
           ))}
         </nav>
 
-        {/* Active Tab Content */}
-        <div className="tab-content">
-          {ActiveComponent && <ActiveComponent />}
+        {/* Swipeable Tab Content */}
+        <div 
+          className="tab-content-wrapper"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          <div 
+            className={`tab-slider ${isDragging ? 'dragging' : ''}`}
+            style={{
+              transform: `translateX(calc(-${currentTabIndex * 100}% + ${dragOffset}px))`
+            }}
+          >
+            {tabs.map((tab) => (
+              <div key={tab.id} className="tab-content">
+                <tab.component />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
