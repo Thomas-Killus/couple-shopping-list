@@ -7,21 +7,21 @@
 .nav-btn.today { background:linear-gradient(135deg,#667eea 0%, #764ba2 100%); color:white; border:none; }
 .month-title { font-weight:700; color:#333; min-width:160px; text-align:center; }
 
-.month-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-top:0.75rem; grid-auto-rows: 120px; }
+.month-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-top:0.75rem; grid-auto-rows: 120px; min-width:0; }
 .weekday { text-align:center; font-weight:700; color:#666; font-size:0.85rem; padding:4px 0; }
-.day-cell { background:#f8f9fa; border:1px solid #eee; border-radius:10px; padding:6px; height:100%; position:relative; cursor:pointer; display:flex; flex-direction:column; gap:4px; overflow:visible; }
+.day-cell { background:#f8f9fa; border:1px solid #eee; border-radius:10px; padding:6px; height:100%; position:relative; cursor:pointer; display:flex; flex-direction:column; gap:4px; overflow:visible; min-width:0; }
 .day-cell.other-month { opacity:0.5; }
 .day-cell.today { outline:2px solid #667eea; }
 .day-number { position:relative; font-weight:700; color:#333; font-size:0.9rem; }
 .day-events { display:flex; flex-direction:column; gap:4px; overflow:hidden; }
-.event-chip { display:flex; align-items:center; background:white; border:1px solid #e0e0e0; border-radius:8px; padding:2px 6px; font-size:0.5rem; line-height:1.1; box-shadow:0 1px 3px rgba(0,0,0,0.05); min-height:18px; }
-.chip-thomas { border-left:4px solid #667eea; }
-.chip-chantale { border-left:4px solid #f5576c; }
-.chip-both { border-left:4px solid #00c2fe; }
+.event-chip { display:flex; align-items:center; border:1px solid #e0e0e0; border-radius:8px; padding:2px 6px; font-size:0.6rem; line-height:1.1; box-shadow:0 1px 3px rgba(0,0,0,0.05); min-height:18px; max-width:100%; }
+.chip-thomas { border-left:4px solid #667eea; background:#909cf7; color:#1f1f28; }
+.chip-chantale { border-left:4px solid #f5576c; background:#f791a7; color:#1f1f28; }
+.chip-both { border-left:4px solid #00c2fe; background:#98dff9; color:#1f1f28; }
 .chip-title { color:#333; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; }
 
 /* Visual spanning for multi-day events */
-.event-chip.chip-span { margin-left:-6px; margin-right:-6px; border-radius:0; }
+.event-chip.chip-span { margin-left:-6px; margin-right:-6px; border-radius:0; max-width:calc(100% + 12px); }
 .event-chip.chip-span.chip-start { margin-left:0; border-top-left-radius:8px; border-bottom-left-radius:8px; }
 .event-chip.chip-span.chip-end { margin-right:0; border-top-right-radius:8px; border-bottom-right-radius:8px; }
 
