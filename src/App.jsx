@@ -4,6 +4,7 @@ import Chores from './Chores';
 import Expenses from './Expenses';
 import Calendar from './Calendar';
 import Stats from './Stats';
+import Meals from './Meals';
 import './App.css';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
     { id: 'expenses', label: '💰 Expenses', component: Expenses },
     { id: 'stats', label: '📊 Stats', component: Stats },
     { id: 'calendar', label: '📅 Calendar', component: Calendar },
+    { id: 'meals', label: '🍽️ Meals', component: Meals },
   ];
 
   const currentTabIndex = tabs.findIndex(tab => tab.id === activeTab);
