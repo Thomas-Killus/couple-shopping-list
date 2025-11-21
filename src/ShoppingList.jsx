@@ -3,11 +3,10 @@ import { ref, push, onValue, update, remove } from 'firebase/database';
 import { database } from './firebase';
 
 const LIST_KEYS = [
-  { key: 'shopping', label: 'Shopping' },
-  { key: 'besorgen', label: 'Besorgen' },
-  { key: 'todo', label: 'ToDo' },
-  { key: 'juggling', label: 'Juggling' },
-  { key: 'random', label: 'Random' },
+  { key: 'shopping', label: 'Shopping', subtitle: 'Brauchen wir noch Bier?' },
+  { key: 'besorgen', label: 'Besorgen', subtitle: 'vllt so ein richtig schönes Holzbrett?' },
+  { key: 'todo', label: 'ToDo', subtitle: 'Yay wir schaffen das!' },
+  { key: 'juggling', label: 'Juggling', subtitle: 'Was sollen wir üben?' },
 ];
 
 function ShoppingList() {
@@ -92,7 +91,7 @@ function ShoppingList() {
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text'
         }}>🛒 Our Shopping List</h1>
-        <p className="subtitle">brauchen wir noch Bier?</p>
+        <p className="subtitle">{LIST_KEYS.find(l => l.key === listKey)?.subtitle}</p>
 
         <div className="list-switcher" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
           {LIST_KEYS.map(l => (
@@ -173,9 +172,9 @@ function ShoppingList() {
         )}
       </ul>
 
-      <footer className="footer">
+      {/* <footer className="footer">
         <p>💜 und Mango?</p>
-      </footer>
+      </footer> */}
     </>
   );
 }
