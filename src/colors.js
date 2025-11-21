@@ -62,6 +62,47 @@ const colors = {
     link: '#d35400',
     hover: '#c0392b',
   },
+
+  // Dark mode colors
+  dark: {
+    thomas: {
+      primary: '#f39c12',
+      light: '#3d2f1f',
+      gradient: 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)',
+    },
+    chantale: {
+      primary: '#fd79a8',
+      light: '#3d1f2f',
+      gradient: 'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)',
+    },
+    both: {
+      primary: '#55efc4',
+      light: '#1f3d32',
+      gradient: 'linear-gradient(135deg, #55efc4 0%, #00b894 100%)',
+    },
+    primary: {
+      main: '#e67e22',
+      light: '#f39c12',
+      gradient: 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)',
+    },
+    background: {
+      page: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
+      card: '#2c3e50',
+      secondary: '#34495e',
+      hover: '#3d5066',
+    },
+    text: {
+      primary: '#ecf0f1',
+      secondary: '#bdc3c7',
+      muted: '#95a5a6',
+      light: '#ffffff',
+    },
+    border: {
+      light: '#4a5f7f',
+      medium: '#5d7394',
+      dark: '#7f8c8d',
+    },
+  },
 };
 
 // Helper function to get gradient string

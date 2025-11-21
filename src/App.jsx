@@ -9,6 +9,7 @@ import './App.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState('shopping');
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -17,6 +18,15 @@ function App() {
   const containerRef = useRef(null);
   const navRef = useRef(null);
   const tabRefs = useRef([]);
+
+  // Apply dark mode class to document root
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const tabs = [
     { id: 'shopping', label: '🛒 Lists', component: ShoppingList },
@@ -185,6 +195,31 @@ function App() {
         className="container"
         ref={containerRef}
       >
+        {/* Dark mode toggle button */}
+        <button
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            border: '2px solid var(--color-border-light)',
+            background: 'var(--color-bg-card)',
+            cursor: 'pointer',
+            fontSize: '1.2rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            transition: 'all 0.3s ease',
+          }}
+          aria-label="Toggle dark mode"
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
+
         {/* Tab Navigation */}
         <nav className="tab-nav" ref={navRef}>
           {tabs.map((tab, i) => (

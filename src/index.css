@@ -59,6 +59,38 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Dark mode overrides */
+:root.dark {
+  --color-thomas-primary: #f39c12;
+  --color-thomas-light: #3d2f1f;
+  --color-thomas-gradient: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  
+  --color-chantale-primary: #fd79a8;
+  --color-chantale-light: #3d1f2f;
+  --color-chantale-gradient: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+  
+  --color-both-primary: #55efc4;
+  --color-both-light: #1f3d32;
+  --color-both-gradient: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
+  
+  --color-primary-main: #e67e22;
+  --color-primary-light: #f39c12;
+  --color-primary-gradient: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  
+  --color-bg-page: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  --color-bg-card: #1e2a38;
+  --color-bg-secondary: #34495e;
+  --color-bg-hover: #3d5066;
+  
+  --color-text-primary: #ecf0f1;
+  --color-text-secondary: #bdc3c7;
+  --color-text-muted: #95a5a6;
+  
+  --color-border-light: #4a5f7f;
+  --color-border-medium: #5d7394;
+  --color-border-dark: #7f8c8d;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
