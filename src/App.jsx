@@ -29,12 +29,12 @@ function App() {
   }, [isDarkMode]);
 
   const tabs = [
-    { id: 'shopping', label: '🛒 Lists', component: ShoppingList },
-    { id: 'chores', label: '🧹 Chores', component: Chores },
-    { id: 'expenses', label: '💰 Expenses', component: Expenses },
-    { id: 'stats', label: '📊 Stats', component: Stats },
-    { id: 'calendar', label: '📅 Calendar', component: Calendar },
-    { id: 'meals', label: '🍽️ Meals', component: Meals },
+    { id: 'shopping', label: '🛒', component: ShoppingList },
+    { id: 'chores', label: '🧹', component: Chores },
+    { id: 'expenses', label: '💰', component: Expenses },
+    { id: 'stats', label: '📊', component: Stats },
+    { id: 'calendar', label: '📅', component: Calendar },
+    { id: 'meals', label: '🍽️', component: Meals },
   ];
 
   const currentTabIndex = tabs.findIndex(tab => tab.id === activeTab);
