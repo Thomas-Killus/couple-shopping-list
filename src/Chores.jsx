@@ -83,11 +83,11 @@ function Chores() {
     return () => unsubscribe();
   }, []);
 
-  const formatDateTime = (ts) => {
+  const formatDate = (ts) => {
     const d = new Date(ts);
-    return d.toLocaleString('de-DE', {
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit'
+    return d.toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: '2-digit'
     });
   };
 
@@ -402,7 +402,7 @@ function Chores() {
                   <span>•</span>
                   <span style={{ fontWeight: 700, color: 'var(--color-primary-light)' }}>{h.points} pts</span>
                   <span>•</span>
-                  <span>{formatDateTime(h.timestamp)}</span>
+                  <span>{formatDate(h.timestamp)}</span>
                 </div>
               </li>
             ))}
