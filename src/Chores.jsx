@@ -14,7 +14,7 @@ const PRESET_CHORES = [
   { name: 'Wäsche abhängen', points: 4 },
   { name: 'Spülmaschine ausräumen', points: 2 },
   { name: 'Aufräumen', points: 5 },
-  { name: 'Kleines Putzen', points: 2 },
+  { name: 'little clean up', points: 2 },
   { name: 'Pfand', points: 3 },
   { name: 'Altpapier', points: 2 },
   { name: 'Altglas', points: 3 },
