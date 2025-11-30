@@ -18,6 +18,7 @@ const PRESET_CHORES = [
   { name: 'Altpapier', points: 5 },
   { name: 'Altglas', points: 5 },
   { name: 'Gießen', points: 5, recurring: true, recurDays: 6 },
+  { name: 'Pflanzenpflege', points: 5 },
 ];
 
 function Chores() {
@@ -41,7 +42,8 @@ function Chores() {
           id: key,
           ...data[key]
         }));
-        choresArray.sort((a, b) => b.timestamp - a.timestamp);
+        // Sort alphabetically by chore name (locale-aware)
+        choresArray.sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }));
         setActiveChores(choresArray);
       } else {
         setActiveChores([]);
@@ -256,7 +258,9 @@ function Chores() {
             className="chore-select"
           >
             <option value="">Select a chore...</option>
-            {PRESET_CHORES.map(chore => (
+            {[...PRESET_CHORES]
+              .sort((a,b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }))
+              .map(chore => (
               <option key={chore.name} value={chore.name}>
                 {chore.name} ({chore.points} pts)
               </option>
