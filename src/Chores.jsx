@@ -400,7 +400,7 @@ function Chores() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-secondary)' }}>
                   <span>{h.completedBy}</span>
                   <span>•</span>
-                  <span style={{ fontWeight: 700, color: 'var(--color-primary-light)' }}>{h.points} pts</span>
+                  <span style={{ fontWeight: 700, color: 'var(--color-primary-light)' }}>{h.points}pts</span>
                   <span>•</span>
                   <span>{formatDate(h.timestamp)}</span>
                 </div>
