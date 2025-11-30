@@ -10,7 +10,7 @@ function Expenses() {
   
   // Form fields
   const [amount, setAmount] = useState('');
-  const [paidBy, setPaidBy] = useState('Thomas');
+  const [paidBy, setPaidBy] = useState('Chantale');
   const [forWhom, setForWhom] = useState('Both');
   const [description, setDescription] = useState('');
 
@@ -92,7 +92,7 @@ function Expenses() {
     // Reset form
     setAmount('');
     setDescription('');
-    setPaidBy('Thomas');
+    setPaidBy('Chantale');
     setForWhom('Both');
     setShowAddExpense(false);
   };
@@ -178,8 +178,8 @@ function Expenses() {
                 onChange={(e) => setPaidBy(e.target.value)}
                 className="select"
               >
-                <option value="Thomas">Thomas</option>
                 <option value="Chantale">Chantale</option>
+                <option value="Thomas">Thomas</option>
               </select>
             </div>
 
@@ -191,8 +191,8 @@ function Expenses() {
                 className="select"
               >
                 <option value="Both">Both</option>
-                <option value="Thomas">Thomas</option>
                 <option value="Chantale">Chantale</option>
+                <option value="Thomas">Thomas</option>
               </select>
             </div>
           </div>

@@ -15,7 +15,7 @@ function Calendar() {
   // Modal for add/edit
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState('');
-  const [forWhom, setForWhom] = useState('Thomas');
+  const [forWhom, setForWhom] = useState('Chantale');
   const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0,10));
   const [startTime, setStartTime] = useState('10:00');
   const [endDate, setEndDate] = useState(() => new Date().toISOString().slice(0,10));
@@ -140,7 +140,7 @@ function Calendar() {
     const key = isoKey(date);
     setSelectedEvent(null);
     setTitle('');
-    setForWhom('Thomas');
+    setForWhom('Chantale');
     setStartDate(key);
     setEndDate(key);
     setStartTime('10:00');
@@ -217,8 +217,8 @@ function Calendar() {
                 <div className="calendar-row">
                   <label>For:</label>
                   <select value={forWhom} onChange={e => setForWhom(e.target.value)} className="input select">
-                    <option>Thomas</option>
                     <option>Chantale</option>
+                    <option>Thomas</option>
                     <option>Both</option>
                   </select>
                 </div>

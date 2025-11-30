@@ -327,16 +327,16 @@ function Chores() {
               <div className="modal-actions">
                 <p className="modal-question">Who completed this?</p>
                 <button
-                  onClick={() => completeChore(selectedChore, 'Thomas')}
-                  className="btn-complete btn-thomas"
-                >
-                  Thomas
-                </button>
-                <button
                   onClick={() => completeChore(selectedChore, 'Chantale')}
                   className="btn-complete btn-chantale"
                 >
                   Chantale
+                </button>
+                <button
+                  onClick={() => completeChore(selectedChore, 'Thomas')}
+                  className="btn-complete btn-thomas"
+                >
+                  Thomas
                 </button>
                 <button
                   onClick={() => completeChore(selectedChore, 'Both')}
