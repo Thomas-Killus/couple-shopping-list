@@ -9,7 +9,17 @@ import './App.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState('shopping');
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Initialize dark mode from localStorage; default to dark if unset
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark') return true;
+      if (saved === 'light') return false;
+      return true; // default: dark mode
+    } catch (_) {
+      return true;
+    }
+  });
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -25,6 +35,11 @@ function App() {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
+    }
+    try {
+      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    } catch (_) {
+      // ignore persistence errors
     }
   }, [isDarkMode]);
 
