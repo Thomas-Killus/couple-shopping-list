@@ -5,19 +5,20 @@ import { database } from './firebase';
 import './Chores.css';
 
 const PRESET_CHORES = [
-  { name: 'Müll runter', points: 5 },
+  { name: 'Müll runter', points: 3 },
   { name: 'Kochen', points: 5 },
   { name: 'Bad putzen', points: 5 },
-  { name: 'Einkaufen', points: 5 },
-  { name: 'Saugen', points: 5 },
-  { name: 'Wäsche aufhängen', points: 5 },
-  { name: 'Wäsche abhängen', points: 5 },
-  { name: 'Spülmaschine ausräumen', points: 5 },
+  { name: 'Einkaufen', points: 4 },
+  { name: 'Saugen', points: 3 },
+  { name: 'Wäsche aufhängen', points: 3 },
+  { name: 'Wäsche abhängen', points: 4 },
+  { name: 'Spülmaschine ausräumen', points: 2 },
   { name: 'Aufräumen', points: 5 },
-  { name: 'Pfand', points: 5 },
-  { name: 'Altpapier', points: 5 },
-  { name: 'Altglas', points: 5 },
-  { name: 'Gießen', points: 5, recurring: true, recurDays: 6 },
+  { name: 'Kleines Putzen', points: 2 },
+  { name: 'Pfand', points: 3 },
+  { name: 'Altpapier', points: 2 },
+  { name: 'Altglas', points: 3 },
+  { name: 'Gießen', points: 3, recurring: true, recurDays: 6 },
   { name: 'Pflanzenpflege', points: 5 },
 ];
 
