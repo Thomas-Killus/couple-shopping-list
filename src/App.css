@@ -203,6 +203,44 @@ h1 {
   color: var(--color-primary-main);
 }
 
+/* List switcher buttons (ShoppingList) */
+.list-switcher {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.list-switch-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, transform 0.2s;
+}
+
+.list-switch-btn.active {
+  background: var(--color-primary-gradient);
+  color: var(--color-text-light);
+  border-color: var(--color-primary-light);
+}
+
+.list-switch-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 420px) {
+  .list-switcher { gap: 0.4rem; }
+  .list-switch-btn {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.7rem;
+    border-radius: 6px;
+  }
+}
+
 /* Items List */
 .items-list {
   list-style: none;

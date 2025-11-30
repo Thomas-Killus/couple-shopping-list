@@ -94,21 +94,12 @@ function ShoppingList() {
         }}>Lists</h1>
         <p className="subtitle">{LIST_KEYS.find(l => l.key === listKey)?.subtitle}</p>
 
-        <div className="list-switcher" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+        <div className="list-switcher">
           {LIST_KEYS.map(l => (
             <button
               key={l.key}
               className={`list-switch-btn ${listKey === l.key ? 'active' : ''}`}
               onClick={() => setListKey(l.key)}
-              style={{
-                padding: '0.35rem 0.6rem',
-                borderRadius: 8,
-                border: `1px solid ${colors.border.light}`,
-                background: listKey === l.key ? colors.primary.gradient : 'white',
-                color: listKey === l.key ? 'white' : colors.text.secondary,
-                fontSize: '0.85rem',
-                cursor: 'pointer'
-              }}
             >
               {l.label}
             </button>
