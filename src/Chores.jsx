@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ref, push, onValue, update, remove, increment } from 'firebase/database';
+import { ref, push, onValue, update, remove, increment, query, orderByChild, limitToLast } from 'firebase/database';
 import { database } from './firebase';
 import './Chores.css';
 
@@ -30,6 +30,7 @@ function Chores() {
   const [customPoints, setCustomPoints] = useState(5);
   const [loading, setLoading] = useState(true);
   const [selectedChore, setSelectedChore] = useState(null);
+  const [recentHistory, setRecentHistory] = useState([]);
 
   // Load active chores
   useEffect(() => {
@@ -67,6 +68,28 @@ function Chores() {
 
     return () => unsubscribe();
   }, []);
+
+  // Load last 5 completed chores
+  useEffect(() => {
+    const historyRef = ref(database, 'chores/history');
+    const q = query(historyRef, orderByChild('timestamp'), limitToLast(5));
+    const unsubscribe = onValue(q, (snapshot) => {
+      const data = snapshot.val() || {};
+      const arr = Object.values(data)
+        .filter(Boolean)
+        .sort((a,b) => b.timestamp - a.timestamp);
+      setRecentHistory(arr);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const formatDateTime = (ts) => {
+    const d = new Date(ts);
+    return d.toLocaleString('de-DE', {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    });
+  };
 
   // Check for recurring chores that need to be reactivated
   useEffect(() => {
@@ -361,6 +384,31 @@ function Chores() {
         ),
         document.body
       )}
+
+      {/* Recent history */}
+      <div style={{ marginTop: '1.5rem' }}>
+        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.75rem', color: 'var(--color-text-primary)' }}>Recently Done</h3>
+        {recentHistory.length === 0 ? (
+          <div className="empty-state">
+            <p>No chores completed yet</p>
+          </div>
+        ) : (
+          <ul className="items-list">
+            {recentHistory.map((h, idx) => (
+              <li key={idx} className="item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="item-name" style={{ fontWeight: 600 }}>{h.name}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-secondary)' }}>
+                  <span>{h.completedBy}</span>
+                  <span>•</span>
+                  <span style={{ fontWeight: 700, color: 'var(--color-primary-light)' }}>{h.points} pts</span>
+                  <span>•</span>
+                  <span>{formatDateTime(h.timestamp)}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
