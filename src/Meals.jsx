@@ -25,7 +25,6 @@ function Meals() {
 
   const [newMealName, setNewMealName] = useState('');
   const [newMealRecipe, setNewMealRecipe] = useState('');
-  const [selectedCatalogId, setSelectedCatalogId] = useState('');
   const [showAdd, setShowAdd] = useState(false);
 
   const [openMealId, setOpenMealId] = useState(null); // expand recipe link editor
@@ -64,28 +63,12 @@ function Meals() {
   const resetForm = () => {
     setNewMealName('');
     setNewMealRecipe('');
-    setSelectedCatalogId('');
   };
 
   // Add a meal wish either from existing catalog or as new
   const addMealWish = (e) => {
     e.preventDefault();
-    // If choosing existing meal
-    if (selectedCatalogId) {
-      const meal = catalog.find(m => m.id === selectedCatalogId);
-      if (!meal) return;
-      const wishesRef = ref(database, 'meals/wishes');
-      push(wishesRef, {
-        name: meal.name,
-        recipeUrl: meal.recipeUrl || '',
-        catalogId: meal.id,
-        timestamp: Date.now()
-      });
-      resetForm();
-      setShowAdd(false);
-      return;
-    }
-    // New meal path
+    // New meal path only
     const name = newMealName.trim();
     if (!name) return;
     const catalogRef = ref(database, 'meals/catalog');
@@ -103,6 +86,21 @@ function Meals() {
     });
     resetForm();
     setShowAdd(false);
+  };
+
+  const addWishFromCatalog = (meal) => {
+    const wishesRef = ref(database, 'meals/wishes');
+    push(wishesRef, {
+      name: meal.name,
+      recipeUrl: meal.recipeUrl || '',
+      catalogId: meal.id,
+      timestamp: Date.now()
+    });
+  };
+
+  const setVote = (wishId, who, value) => {
+    const wishRef = ref(database, `meals/wishes/${wishId}/votes`);
+    update(wishRef, { [who]: value });
   };
 
   // Update recipe link for a wish + catalog
@@ -151,28 +149,13 @@ function Meals() {
 
       {showAdd && (
         <form onSubmit={addMealWish} className="add-item-form" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Choose previous meal</label>
-            <select
-              value={selectedCatalogId}
-              onChange={(e) => { setSelectedCatalogId(e.target.value); setNewMealName(''); setNewMealRecipe(''); }}
-              className="input"
-              style={{ fontSize: '0.95rem' }}
-            >
-              <option value="">-- Select a meal --</option>
-              {catalog.map(meal => (
-                <option key={meal.id} value={meal.id}>{meal.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ textAlign: 'center', fontSize: '0.8rem', color: '#666', margin: '0.5rem 0' }}>oder NEU ↓</div>
+          <div style={{ textAlign: 'center', fontSize: '0.8rem', color: '#666', margin: '0.5rem 0' }}>NEUES GERICHT</div>
 
             <input
               type="text"
               placeholder="New meal name..."
               value={newMealName}
-              onChange={(e) => { setNewMealName(e.target.value); if (selectedCatalogId) setSelectedCatalogId(''); }}
+              onChange={(e) => { setNewMealName(e.target.value); }}
               className="input"
               style={{ width: '100%' }}
             />
@@ -180,7 +163,7 @@ function Meals() {
               type="text"
               placeholder="Recipe URL (optional)"
               value={newMealRecipe}
-              onChange={(e) => { setNewMealRecipe(e.target.value); if (selectedCatalogId) setSelectedCatalogId(''); }}
+              onChange={(e) => { setNewMealRecipe(e.target.value); }}
               className="input"
               style={{ width: '100%' }}
             />
@@ -191,7 +174,8 @@ function Meals() {
         </form>
       )}
 
-      <ul className="items-list" style={{ marginTop: '1rem' }}>
+      <h3 style={{ fontSize: '1.15rem', marginTop: '1rem', marginBottom: '0.5rem', color: colors.primary.main }}>Wishes</h3>
+      <ul className="items-list" style={{ marginTop: '0.25rem' }}>
         {wishes.length === 0 ? (
           <li className="empty-state">
             <p>No meal wishes yet</p>
@@ -200,6 +184,18 @@ function Meals() {
         ) : (
           wishes.map(wish => {
             const isOpen = openMealId === wish.id;
+            const t = wish.votes?.Thomas;
+            const c = wish.votes?.Chantale;
+            let voteNode = null;
+            if (t !== undefined && c === undefined) {
+              voteNode = <span style={{ marginLeft: '0.5rem', color: colors.thomas.primary }}>{t}</span>;
+            } else if (c !== undefined && t === undefined) {
+              voteNode = <span style={{ marginLeft: '0.5rem', color: colors.chantale.primary }}>{c}</span>;
+            } else if (t !== undefined && c !== undefined) {
+              const avg = (t + c) / 2;
+              const formatted = Number.isInteger(avg) ? avg : avg.toFixed(1);
+              voteNode = <span style={{ marginLeft: '0.5rem', color: colors.both.primary }}>{formatted}</span>;
+            }
             return (
               <li key={wish.id} className="item" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -216,7 +212,7 @@ function Meals() {
                       padding: 0,
                       color: 'var(--color-text-primary)'
                     }}
-                  >{wish.name}</button>
+                   >{wish.name}{voteNode}</button>
                   {wish.recipeUrl && (
                     <a href={wish.recipeUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.8rem', color: colors.accent.link, textDecoration: 'none', marginLeft: '0.75rem' }}>Rezept</a>
                   )}
@@ -234,6 +230,30 @@ function Meals() {
                     ) : (
                       <div style={{ fontSize: '0.85rem', color: '#999' }}>Kein Rezept-Link vorhanden.</div>
                     )}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Thomas</label>
+                        <input
+                          type="range"
+                          min="-5"
+                          max="5"
+                          step="1"
+                          defaultValue={(wish.votes?.Thomas ?? 0)}
+                          onChange={(e) => setVote(wish.id, 'Thomas', parseInt(e.target.value, 10))}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Chantale</label>
+                        <input
+                          type="range"
+                          min="-5"
+                          max="5"
+                          step="1"
+                          defaultValue={(wish.votes?.Chantale ?? 0)}
+                          onChange={(e) => setVote(wish.id, 'Chantale', parseInt(e.target.value, 10))}
+                        />
+                      </div>
+                    </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <input
                         id={`recipe-input-${wish.id}`}
@@ -268,7 +288,11 @@ function Meals() {
           ) : (
             catalog.map(meal => (
               <li key={meal.id} className="item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 600 }}>{meal.name}</span>
+                <button
+                  onClick={() => addWishFromCatalog(meal)}
+                  style={{ background: 'none', border: 'none', fontWeight: 600, cursor: 'pointer', color: 'var(--color-text-primary)', textAlign: 'left' }}
+                  aria-label={`Wish for ${meal.name}`}
+                >{meal.name}</button>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   {meal.recipeUrl && (
                     <a href={meal.recipeUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.8rem', color: colors.accent.link, textDecoration: 'none' }}>Rezept</a>
