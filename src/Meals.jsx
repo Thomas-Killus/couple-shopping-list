@@ -214,7 +214,7 @@ function Meals() {
                       textAlign: 'left',
                       flex: 1,
                       padding: 0,
-                      color: '#333'
+                      color: 'var(--color-text-primary)'
                     }}
                   >{wish.name}</button>
                   {wish.recipeUrl && (

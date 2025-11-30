@@ -106,7 +106,15 @@
 .progress-name {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #555;
+  color: var(--color-text-secondary);
+}
+
+.progress-name.thomas {
+  color: var(--color-thomas-primary);
+}
+
+.progress-name.chantale {
+  color: var(--color-chantale-primary);
 }
 
 .progress-level {
@@ -166,7 +174,15 @@
 
 .chart-legend span {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--color-text-secondary);
+}
+
+.chart-legend .legend-thomas {
+  color: var(--color-thomas-primary);
+}
+
+.chart-legend .legend-chantale {
+  color: var(--color-chantale-primary);
 }
 
 /* Responsive */

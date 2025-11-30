@@ -183,7 +183,7 @@ function Stats() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 className="section-title" style={{ margin: 0 }}>Chore Levels</h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <label htmlFor="rangeSel" style={{ fontSize: '0.9rem', color: '#555' }}>Range:</label>
+            <label htmlFor="rangeSel" style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>Range:</label>
             <select id="rangeSel" value={range} onChange={e => setRange(e.target.value)} className="chore-select" style={{ margin: 0, padding: '0.4rem 0.6rem', maxWidth: 140 }}>
               <option value="30">Last 30 days</option>
               <option value="90">Last 90 days</option>
@@ -209,7 +209,7 @@ function Stats() {
               {/* Thomas Progress */}
               <div className="person-progress">
                 <div className="progress-header">
-                  <span className="progress-name">Thomas</span>
+                  <span className="progress-name thomas">Thomas</span>
                   <span className="progress-level">Level {thomasLevel.level}</span>
                 </div>
                 <div className="progress-bar-container">
@@ -227,7 +227,7 @@ function Stats() {
               {/* Chantale Progress */}
               <div className="person-progress">
                 <div className="progress-header">
-                  <span className="progress-name">Chantale</span>
+                  <span className="progress-name chantale">Chantale</span>
                   <span className="progress-level">Level {chantaleLevel.level}</span>
                 </div>
                 <div className="progress-bar-container">
@@ -252,7 +252,7 @@ function Stats() {
             
             <div className="person-progress">
               <div className="progress-header">
-                <span className="progress-name">Thomas</span>
+                <span className="progress-name thomas">Thomas</span>
                 <span className="progress-level">
                   Level {calculateLevel(counters.thomas_custom || 0).level}
                 </span>
@@ -273,7 +273,7 @@ function Stats() {
 
             <div className="person-progress">
               <div className="progress-header">
-                <span className="progress-name">Chantale</span>
+                <span className="progress-name chantale">Chantale</span>
                 <span className="progress-level">
                   Level {calculateLevel(counters.chantale_custom || 0).level}
                 </span>
@@ -340,11 +340,11 @@ function CumulativeChart({ days, thomas, chantale }) {
         <path d={tPath} fill="none" stroke={colors.thomas.primary} strokeWidth="3" strokeLinecap="round" />
       </svg>
       <div className="chart-legend" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '0.5rem' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span className="legend-thomas" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ width: 18, height: 3, background: colors.thomas.primary, display: 'inline-block', borderRadius: 2 }} />
           Thomas
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span className="legend-chantale" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ width: 18, height: 3, background: colors.chantale.primary, display: 'inline-block', borderRadius: 2 }} />
           Chantale
         </span>
