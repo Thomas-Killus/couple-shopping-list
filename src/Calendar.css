@@ -7,7 +7,7 @@
 .nav-btn.today { background:var(--color-primary-gradient); color:white; border:none; }
 .month-title { font-weight:700; color:var(--color-text-primary); min-width:120px; text-align:center; font-size:0.95rem; }
 
-.month-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-top:0.75rem; grid-auto-rows: 120px; min-width:0; }
+.month-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-top:0.75rem; grid-auto-rows: 72px; min-width:0; }
 .weekday { text-align:center; font-weight:700; color:var(--color-text-secondary); font-size:0.85rem; padding:4px 0; }
 .day-cell { background:var(--color-bg-secondary); border:1px solid #eee; border-radius:10px; padding:4px 2px; height:100%; position:relative; cursor:pointer; display:flex; flex-direction:column; gap:4px; overflow:visible; min-width:0; }
 .day-cell.other-month { opacity:0.5; }
