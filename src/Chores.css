@@ -161,6 +161,11 @@
   animation: slideUp 0.3s ease-out;
 }
 
+/* Chores-specific modal classes (avoid cross-file overrides, e.g. Calendar.css) */
+.chores-modal-content {
+  background: var(--color-bg-card) !important;
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(50px);

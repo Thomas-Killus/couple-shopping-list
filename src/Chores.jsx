@@ -32,6 +32,7 @@ function Chores() {
   const [loading, setLoading] = useState(true);
   const [selectedChore, setSelectedChore] = useState(null);
   const [recentHistory, setRecentHistory] = useState([]);
+  const [recurringLastCompleted, setRecurringLastCompleted] = useState({});
 
   // Load active chores
   useEffect(() => {
@@ -99,7 +100,8 @@ function Chores() {
     const recurringRef = ref(database, 'chores/recurring');
     
     const unsubscribe = onValue(recurringRef, (snapshot) => {
-      const recurringData = snapshot.val();
+      const recurringData = snapshot.val() || {};
+      setRecurringLastCompleted(recurringData);
       const now = Date.now();
       
       PRESET_CHORES.forEach(preset => {
@@ -142,6 +144,13 @@ function Chores() {
 
     return () => unsubscribe();
   }, [activeChores, loading]);
+
+  const getDaysAgo = (ts) => {
+    if (!ts) return null;
+    const days = Math.floor((Date.now() - ts) / (1000 * 60 * 60 * 24));
+    if (!Number.isFinite(days) || days < 0) return null;
+    return days;
+  };
 
   // Sanitize chore name for use as Firebase key
   const sanitizeChoreKey = (choreName) => {
@@ -325,24 +334,33 @@ function Chores() {
             <p className="empty-state-hint">Add a chore to get started</p>
           </div>
         ) : (
-          activeChores.map(chore => (
+          activeChores.map(chore => {
+            let name = chore.name;
+            if (chore.name === 'Gießen') {
+              const key = sanitizeChoreKey('Gießen');
+              const lastTs = recurringLastCompleted?.[key];
+              const daysAgo = getDaysAgo(lastTs);
+              if (daysAgo !== null) name = `Gießen (${daysAgo} days ago)`;
+            }
+            return (
             <div 
               key={chore.id} 
               className="chore-item"
               onClick={() => setSelectedChore(chore)}
             >
-              <span className="chore-name">{chore.name}</span>
+              <span className="chore-name">{name}</span>
               <span className="chore-arrow">›</span>
             </div>
-          ))
+          );
+          })
         )}
       </div>
 
       {/* Modal for completing chore (portal to body to avoid tab transform clipping) */}
       {selectedChore && createPortal(
         (
-          <div className="modal-overlay" onClick={() => setSelectedChore(null)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-overlay chores-modal-overlay" onClick={() => setSelectedChore(null)}>
+            <div className="modal-content chores-modal-content" onClick={(e) => e.stopPropagation()}>
               <button 
                 className="modal-close"
                 onClick={() => setSelectedChore(null)}
