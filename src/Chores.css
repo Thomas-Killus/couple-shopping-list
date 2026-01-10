@@ -64,7 +64,8 @@
   border-radius: 10px;
   font-size: 1rem;
   margin-bottom: 0.75rem;
-  background: white;
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
   cursor: pointer;
 }
 
@@ -150,7 +151,7 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--color-bg-card);
   border-radius: 20px;
   padding: 2rem;
   max-width: 400px;

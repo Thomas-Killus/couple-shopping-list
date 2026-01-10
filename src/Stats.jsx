@@ -14,10 +14,12 @@ const PRESET_CHORES = [
   'Wäsche abhängen',
   'Spülmaschine ausräumen',
   'Aufräumen',
+  'little clean up',
   'Pfand',
   'Altpapier',
   'Altglas',
   'Gießen',
+  'Pflanzenpflege',
 ];
 
 function Stats() {
@@ -193,7 +195,9 @@ function Stats() {
           </div>
         </div>
         
-        {PRESET_CHORES.map(chore => {
+        {[...PRESET_CHORES]
+          .sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }))
+          .map(chore => {
           const thomasXP = getXP('Thomas', chore);
           const chantaleXP = getXP('Chantale', chore);
           const thomasLevel = calculateLevel(thomasXP);

@@ -28,7 +28,7 @@ function Chores() {
   const [showAddChore, setShowAddChore] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState('');
   const [customChore, setCustomChore] = useState('');
-  const [customPoints, setCustomPoints] = useState(5);
+  const [customPoints, setCustomPoints] = useState('5');
   const [loading, setLoading] = useState(true);
   const [selectedChore, setSelectedChore] = useState(null);
   const [recentHistory, setRecentHistory] = useState([]);
@@ -163,7 +163,8 @@ function Chores() {
     if (selectedPreset === 'custom') {
       if (customChore.trim() === '') return;
       choreName = customChore.trim();
-      chorePoints = customPoints;
+      const parsed = parseInt(customPoints, 10);
+      chorePoints = Number.isFinite(parsed) && parsed > 0 ? parsed : 5;
     } else if (selectedPreset) {
       const preset = PRESET_CHORES.find(c => c.name === selectedPreset);
       choreName = preset.name;
@@ -182,7 +183,7 @@ function Chores() {
     // Reset form
     setSelectedPreset('');
     setCustomChore('');
-    setCustomPoints(5);
+    setCustomPoints('5');
     setShowAddChore(false);
   };
 
@@ -304,7 +305,7 @@ function Chores() {
               <input
                 type="number"
                 value={customPoints}
-                onChange={(e) => setCustomPoints(parseInt(e.target.value) || 5)}
+                onChange={(e) => setCustomPoints(e.target.value)}
                 min="1"
                 className="input points-input"
               />
