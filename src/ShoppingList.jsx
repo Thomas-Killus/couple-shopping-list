@@ -69,10 +69,20 @@ function ShoppingList() {
 
   // Clear all completed items
   const clearCompleted = () => {
+    const clearedAt = Date.now();
     items.forEach(item => {
-      if (item.completed) {
-        deleteItem(item.id);
+      if (!item.completed) return;
+
+      // Only persist "bought food" from the Shopping list
+      if (listKey === 'shopping') {
+        const historyRef = ref(database, 'shoppingHistory');
+        push(historyRef, {
+          name: item.name,
+          clearedAt,
+        });
       }
+
+      deleteItem(item.id);
     });
   };
 
