@@ -20,6 +20,7 @@ const PRESET_CHORES = [
   'Altglas',
   'Gießen',
   'Pflanzenpflege',
+  'Workout',
 ];
 
 function Stats() {

@@ -20,6 +20,7 @@ const PRESET_CHORES = [
   { name: 'Altglas', points: 3 },
   { name: 'Gießen', points: 3, recurring: true, recurDays: 6 },
   { name: 'Pflanzenpflege', points: 5 },
+  { name: 'Workout', points: 3 },
 ];
 
 function Chores() {
