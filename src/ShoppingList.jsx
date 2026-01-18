@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ref, push, onValue, update, remove } from 'firebase/database';
 import { database } from './firebase';
 import colors from './colors';
@@ -15,6 +15,7 @@ function ShoppingList() {
   const [newItem, setNewItem] = useState('');
   const [loading, setLoading] = useState(true);
   const [listKey, setListKey] = useState('shopping');
+  const inputRef = useRef(null);
 
   // Load items from Firebase
   useEffect(() => {
@@ -53,6 +54,10 @@ function ShoppingList() {
     });
 
     setNewItem('');
+    // Refocus the input field so keyboard stays open and user can keep typing
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   // Toggle item completion
@@ -119,6 +124,7 @@ function ShoppingList() {
 
       <form onSubmit={addItem} className="add-item-form">
         <input
+          ref={inputRef}
           type="text"
           value={newItem}
           onChange={(e) => setNewItem(e.target.value)}
