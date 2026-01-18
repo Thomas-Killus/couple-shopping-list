@@ -180,9 +180,9 @@ function ShoppingList() {
         )}
       </ul>
 
-      {/* <footer className="footer">
-        <p>💜 und Mango?</p>
-      </footer> */}
+      <footer className="footer">
+        <p>Der Frühling kommt! 🌱</p>
+      </footer>
     </>
   );
 }
