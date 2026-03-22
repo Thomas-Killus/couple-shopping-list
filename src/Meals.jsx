@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ref, push, onValue, update, remove } from 'firebase/database';
+import { ref, push, onValue, update, remove, get } from 'firebase/database';
 import colors from './colors';
   // Delete a meal wish
   const deleteWish = (id) => {
@@ -15,7 +15,7 @@ import colors from './colors';
 import { database } from './firebase';
 
 /* Meal data structure:
-Catalog path: meals/catalog/{id}: { name, recipeUrl?, createdAt }
+Catalog path: meals/catalog/{id}: { name, recipeUrl?, ingredients?: string[], createdAt }
 Wishes path: meals/wishes/{id}: { name, recipeUrl?, catalogId, timestamp }
 */
 function Meals() {
@@ -28,6 +28,7 @@ function Meals() {
   const [showAdd, setShowAdd] = useState(false);
 
   const [openMealId, setOpenMealId] = useState(null); // expand recipe link editor
+  const [ingredientInput, setIngredientInput] = useState('');
 
   // Load catalog
   useEffect(() => {
@@ -124,6 +125,50 @@ function Meals() {
         update(catRef, { recipeUrl: url });
       }
     }
+  };
+
+  const getCatalogId = (wish) => {
+    if (wish.catalogId) return wish.catalogId;
+    const match = catalog.find(c => c.name === wish.name);
+    return match?.id || null;
+  };
+
+  const addIngredient = (catalogId, ingredient) => {
+    const meal = catalog.find(c => c.id === catalogId);
+    const current = meal?.ingredients || [];
+    const updated = [...current, ingredient];
+    const catRef = ref(database, `meals/catalog/${catalogId}`);
+    update(catRef, { ingredients: updated });
+  };
+
+  const removeIngredient = (catalogId, index) => {
+    const meal = catalog.find(c => c.id === catalogId);
+    const current = meal?.ingredients || [];
+    const updated = current.filter((_, i) => i !== index);
+    const catRef = ref(database, `meals/catalog/${catalogId}`);
+    update(catRef, { ingredients: updated });
+  };
+
+  const addToShoppingList = async (ingredients) => {
+    if (!ingredients || ingredients.length === 0) return;
+    const listRef = ref(database, 'shoppingList/shopping');
+    const snapshot = await get(listRef);
+    const data = snapshot.val();
+    const existingNames = new Set();
+    if (data) {
+      Object.values(data).forEach(item => {
+        existingNames.add(item.name.toLowerCase());
+      });
+    }
+    ingredients.forEach(ingredient => {
+      if (!existingNames.has(ingredient.toLowerCase())) {
+        push(listRef, {
+          name: ingredient,
+          completed: false,
+          timestamp: Date.now()
+        });
+      }
+    });
   };
 
   if (loading) {
@@ -270,6 +315,65 @@ function Meals() {
                         style={{ padding: '0.5rem 0.9rem' }}
                       >Save</button>
                     </div>
+                    {(() => {
+                      const catId = getCatalogId(wish);
+                      const catEntry = catalog.find(c => c.id === catId);
+                      const ingredients = catEntry?.ingredients || [];
+                      return (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Zutaten</label>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginTop: '0.25rem' }}>
+                            {ingredients.map((ing, idx) => (
+                              <span key={idx} style={{
+                                background: colors.primary.light || '#e8f0fe',
+                                borderRadius: '1rem',
+                                padding: '0.2rem 0.6rem',
+                                fontSize: '0.82rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.3rem'
+                              }}>
+                                {ing}
+                                <button
+                                  onClick={() => removeIngredient(catId, idx)}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '0.75rem', color: '#999', lineHeight: 1 }}
+                                  aria-label={`Remove ${ing}`}
+                                >✕</button>
+                              </span>
+                            ))}
+                            {ingredients.length === 0 && <span style={{ fontSize: '0.82rem', color: '#999' }}>Keine Zutaten hinterlegt.</span>}
+                          </div>
+                          {catId && (
+                            <form onSubmit={(e) => {
+                              e.preventDefault();
+                              const val = ingredientInput.trim();
+                              if (!val) return;
+                              addIngredient(catId, val);
+                              setIngredientInput('');
+                            }} style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem' }}>
+                              <input
+                                type="text"
+                                value={ingredientInput}
+                                onChange={(e) => setIngredientInput(e.target.value)}
+                                placeholder="Zutat hinzufügen..."
+                                className="input"
+                                style={{ flex: 1, padding: '0.4rem 0.7rem' }}
+                              />
+                              <button type="submit" className="btn btn-primary" style={{ padding: '0.4rem 0.8rem' }}>+</button>
+                            </form>
+                          )}
+                          {ingredients.length > 0 && (
+                            <button
+                              onClick={() => addToShoppingList(ingredients)}
+                              className="btn btn-primary"
+                              style={{ marginTop: '0.5rem', width: '100%', padding: '0.5rem' }}
+                            >
+                              🪄 Auf die Einkaufsliste zaubern
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </li>
