@@ -153,6 +153,23 @@ function Stats() {
     return counters[key] || 0;
   };
 
+  const sortedChoreStats = PRESET_CHORES
+    .map((chore) => {
+      const thomasXP = getXP('Thomas', chore);
+      const chantaleXP = getXP('Chantale', chore);
+      return {
+        chore,
+        thomasXP,
+        chantaleXP,
+        totalXP: thomasXP + chantaleXP,
+      };
+    })
+    .filter((item) => item.totalXP > 0)
+    .sort((a, b) => {
+      if (b.totalXP !== a.totalXP) return b.totalXP - a.totalXP;
+      return a.chore.localeCompare(b.chore, 'de', { sensitivity: 'base' });
+    });
+
   if (loading) {
     return (
       <div className="stats-container">
@@ -196,17 +213,10 @@ function Stats() {
           </div>
         </div>
         
-        {[...PRESET_CHORES]
-          .sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }))
-          .map(chore => {
-          const thomasXP = getXP('Thomas', chore);
-          const chantaleXP = getXP('Chantale', chore);
+        {sortedChoreStats.map(({ chore, thomasXP, chantaleXP }) => {
           const thomasLevel = calculateLevel(thomasXP);
           const chantaleLevel = calculateLevel(chantaleXP);
-          
-          // Skip if neither person has done this chore
-          if (thomasXP === 0 && chantaleXP === 0) return null;
-          
+
           return (
             <div key={chore} className="chore-stat">
               <h4 className="chore-stat-title">{chore}</h4>
