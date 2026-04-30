@@ -181,7 +181,7 @@ function ShoppingList() {
       </ul>
 
       <footer className="footer">
-        <p>Wollen wir in den Garten? 🌱</p>
+        <p>Was machen die Pflanzen?</p>
       </footer>
     </>
   );

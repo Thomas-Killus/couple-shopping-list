@@ -136,11 +136,11 @@ function Expenses() {
           </div>
         ) : thomasBalance > 0 ? (
           <div className="balance-owed">
-            <strong>Thomas</strong> hat <strong className="balance-amount">€{(Math.abs(thomasBalance) * 2).toFixed(2)}</strong> mehr gezahlt. Krasser Typ! Ich schwör
+            <strong>Thomas</strong> hat <strong className="balance-amount">€{(Math.abs(thomasBalance) * 2).toFixed(2)}</strong> mehr gezahlt. Auch Sugar Daddy? 😏
           </div>
         ) : (
           <div className="balance-owed">
-            <strong>Chantale</strong> hat <strong className="balance-amount">€{(Math.abs(chantaleBalance) * 2).toFixed(2)}</strong> mehr gezahlt. Sugar Mommy?! 😏
+            <strong>Chantale</strong> hat <strong className="balance-amount">€{(Math.abs(chantaleBalance) * 2).toFixed(2)}</strong> mehr gezahlt. Safe Sugar Mommy! 😏
           </div>
         )}
       </div>
