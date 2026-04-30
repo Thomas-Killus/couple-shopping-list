@@ -27,9 +27,6 @@ function Chores() {
   const [activeChores, setActiveChores] = useState([]);
   const [scores, setScores] = useState({ Thomas: 0, Chantale: 0 });
   const [showAddChore, setShowAddChore] = useState(false);
-  const [selectedPreset, setSelectedPreset] = useState('');
-  const [customChore, setCustomChore] = useState('');
-  const [customPoints, setCustomPoints] = useState('5');
   const [loading, setLoading] = useState(true);
   const [selectedChore, setSelectedChore] = useState(null);
   const [recentHistory, setRecentHistory] = useState([]);
@@ -165,36 +162,14 @@ function Chores() {
     return 'custom';
   };
 
-  // Add new chore
-  const addChore = () => {
-    let choreName = '';
-    let chorePoints = 5;
-
-    if (selectedPreset === 'custom') {
-      if (customChore.trim() === '') return;
-      choreName = customChore.trim();
-      const parsed = parseInt(customPoints, 10);
-      chorePoints = Number.isFinite(parsed) && parsed > 0 ? parsed : 5;
-    } else if (selectedPreset) {
-      const preset = PRESET_CHORES.find(c => c.name === selectedPreset);
-      choreName = preset.name;
-      chorePoints = preset.points;
-    } else {
-      return;
-    }
-
+  // Add preset chore immediately with one tap
+  const addPresetChore = (preset) => {
     const choresRef = ref(database, 'chores/active');
     push(choresRef, {
-      name: choreName,
-      points: chorePoints,
+      name: preset.name,
+      points: preset.points,
       timestamp: Date.now()
     });
-
-    // Reset form
-    setSelectedPreset('');
-    setCustomChore('');
-    setCustomPoints('5');
-    setShowAddChore(false);
   };
 
   // Complete chore
@@ -282,49 +257,27 @@ function Chores() {
         onClick={() => setShowAddChore(!showAddChore)} 
         className="btn btn-primary add-chore-btn"
       >
-        {showAddChore ? '✕ Cancel' : '+ Add Chore'}
+        {showAddChore ? '← Back' : '+ Add Chore'}
       </button>
 
       {showAddChore && (
         <div className="add-chore-form">
-          <select 
-            value={selectedPreset} 
-            onChange={(e) => setSelectedPreset(e.target.value)}
-            className="chore-select"
-          >
-            <option value="">Select a chore...</option>
+          <p className="quick-add-helper">Tap a chore to add it instantly:</p>
+          <div className="quick-add-list">
             {[...PRESET_CHORES]
-              .sort((a,b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }))
-              .map(chore => (
-              <option key={chore.name} value={chore.name}>
-                {chore.name} ({chore.points} pts)
-              </option>
-            ))}
-            <option value="custom">✏️ Custom chore</option>
-          </select>
-
-          {selectedPreset === 'custom' && (
-            <div className="custom-chore-inputs">
-              <input
-                type="text"
-                value={customChore}
-                onChange={(e) => setCustomChore(e.target.value)}
-                placeholder="Enter custom chore..."
-                className="input"
-              />
-              <input
-                type="number"
-                value={customPoints}
-                onChange={(e) => setCustomPoints(e.target.value)}
-                min="1"
-                className="input points-input"
-              />
-            </div>
-          )}
-
-          <button onClick={addChore} className="btn btn-primary">
-            Add to List
-          </button>
+              .sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }))
+              .map((chore) => (
+                <button
+                  key={chore.name}
+                  type="button"
+                  className="quick-add-item"
+                  onClick={() => addPresetChore(chore)}
+                >
+                  <span>{chore.name}</span>
+                  <span>{chore.points} pts</span>
+                </button>
+              ))}
+          </div>
         </div>
       )}
 
