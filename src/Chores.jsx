@@ -23,6 +23,20 @@ const PRESET_CHORES = [
   { name: 'Workout', points: 3 },
 ];
 
+const ADD_CHORE_PRIORITY_ORDER = [
+  'little clean up',
+  'Aufräumen',
+  'Kochen',
+  'Spülmaschine ausräumen',
+  'Einkaufen',
+  'Wäsche aufhängen',
+  'Wäsche abhängen',
+];
+
+const ADD_CHORE_PRIORITY_INDEX = new Map(
+  ADD_CHORE_PRIORITY_ORDER.map((name, index) => [name, index])
+);
+
 function Chores() {
   const [activeChores, setActiveChores] = useState([]);
   const [scores, setScores] = useState({ Thomas: 0, Chantale: 0 });
@@ -31,6 +45,19 @@ function Chores() {
   const [selectedChore, setSelectedChore] = useState(null);
   const [recentHistory, setRecentHistory] = useState([]);
   const [recurringLastCompleted, setRecurringLastCompleted] = useState({});
+
+  const sortedAddChores = [...PRESET_CHORES].sort((a, b) => {
+    const aPriority = ADD_CHORE_PRIORITY_INDEX.get(a.name);
+    const bPriority = ADD_CHORE_PRIORITY_INDEX.get(b.name);
+    const aIsPriority = aPriority !== undefined;
+    const bIsPriority = bPriority !== undefined;
+
+    if (aIsPriority && bIsPriority) return aPriority - bPriority;
+    if (aIsPriority) return -1;
+    if (bIsPriority) return 1;
+
+    return a.name.localeCompare(b.name, 'de', { sensitivity: 'base' });
+  });
 
   // Load active chores
   useEffect(() => {
@@ -264,19 +291,17 @@ function Chores() {
         <div className="add-chore-form">
           <p className="quick-add-helper">Tap a chore to add it instantly:</p>
           <div className="quick-add-list">
-            {[...PRESET_CHORES]
-              .sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }))
-              .map((chore) => (
-                <button
-                  key={chore.name}
-                  type="button"
-                  className="quick-add-item"
-                  onClick={() => addPresetChore(chore)}
-                >
-                  <span>{chore.name}</span>
-                  <span>{chore.points} pts</span>
-                </button>
-              ))}
+            {sortedAddChores.map((chore) => (
+              <button
+                key={chore.name}
+                type="button"
+                className="quick-add-item"
+                onClick={() => addPresetChore(chore)}
+              >
+                <span>{chore.name}</span>
+                <span>{chore.points} pts</span>
+              </button>
+            ))}
           </div>
         </div>
       )}
