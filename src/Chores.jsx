@@ -45,6 +45,9 @@ function Chores() {
   const [selectedChore, setSelectedChore] = useState(null);
   const [recentHistory, setRecentHistory] = useState([]);
   const [recurringLastCompleted, setRecurringLastCompleted] = useState({});
+  const [showCustomChoreModal, setShowCustomChoreModal] = useState(false);
+  const [customChoreName, setCustomChoreName] = useState('');
+  const [customChorePoints, setCustomChorePoints] = useState('');
 
   const sortedAddChores = [...PRESET_CHORES].sort((a, b) => {
     const aPriority = ADD_CHORE_PRIORITY_INDEX.get(a.name);
@@ -199,6 +202,17 @@ function Chores() {
     });
   };
 
+  const addCustomChore = () => {
+    const name = customChoreName.trim();
+    const points = parseInt(customChorePoints, 10);
+    if (!name || !points || points < 1) return;
+    const choresRef = ref(database, 'chores/active');
+    push(choresRef, { name, points, timestamp: Date.now() });
+    setCustomChoreName('');
+    setCustomChorePoints('');
+    setShowCustomChoreModal(false);
+  };
+
   // Complete chore
   const completeChore = (chore, person) => {
     const choreRef = ref(database, `chores/active/${chore.id}`);
@@ -302,6 +316,15 @@ function Chores() {
                 <span>{chore.points} pts</span>
               </button>
             ))}
+            <button
+              type="button"
+              className="quick-add-item"
+              style={{ borderStyle: 'dashed', color: 'var(--color-text-secondary)' }}
+              onClick={() => setShowCustomChoreModal(true)}
+            >
+              <span>Custom Chore</span>
+              <span>+ custom</span>
+            </button>
           </div>
         </div>
       )}
@@ -381,6 +404,43 @@ function Chores() {
             </div>
           </div>
         ),
+        document.body
+      )}
+
+      {/* Custom chore modal */}
+      {showCustomChoreModal && createPortal(
+        <div className="modal-overlay chores-modal-overlay" onClick={() => setShowCustomChoreModal(false)}>
+          <div className="modal-content chores-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowCustomChoreModal(false)}>✕</button>
+            <h3 className="modal-title">Custom Chore</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+              <input
+                className="input"
+                type="text"
+                placeholder="Chore name"
+                value={customChoreName}
+                onChange={(e) => setCustomChoreName(e.target.value)}
+                autoFocus
+              />
+              <input
+                className="input points-input"
+                type="number"
+                placeholder="Points"
+                min="1"
+                value={customChorePoints}
+                onChange={(e) => setCustomChorePoints(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addCustomChore()}
+              />
+              <button
+                className="btn btn-primary"
+                onClick={addCustomChore}
+                disabled={!customChoreName.trim() || !customChorePoints}
+              >
+                Add Chore
+              </button>
+            </div>
+          </div>
+        </div>,
         document.body
       )}
 
