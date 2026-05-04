@@ -149,24 +149,33 @@ function Meals() {
     update(catRef, { ingredients: updated });
   };
 
-  const addToShoppingList = async (ingredients) => {
+  const addToShoppingList = async (ingredients, mealName) => {
     if (!ingredients || ingredients.length === 0) return;
     const listRef = ref(database, 'shoppingList/shopping');
     const snapshot = await get(listRef);
     const data = snapshot.val();
-    const existingNames = new Set();
+    const existingItems = {};
     if (data) {
-      Object.values(data).forEach(item => {
-        existingNames.add(item.name.toLowerCase());
+      Object.entries(data).forEach(([key, item]) => {
+        existingItems[item.name.toLowerCase()] = { key, item };
       });
     }
     ingredients.forEach(ingredient => {
-      if (!existingNames.has(ingredient.toLowerCase())) {
+      const lower = ingredient.toLowerCase();
+      if (!existingItems[lower]) {
         push(listRef, {
           name: ingredient,
+          meals: mealName ? [mealName] : [],
           completed: false,
           timestamp: Date.now()
         });
+      } else if (mealName) {
+        const { key, item } = existingItems[lower];
+        const currentMeals = item.meals || [];
+        if (!currentMeals.includes(mealName)) {
+          const itemRef = ref(database, `shoppingList/shopping/${key}`);
+          update(itemRef, { meals: [...currentMeals, mealName] });
+        }
       }
     });
   };
@@ -364,7 +373,7 @@ function Meals() {
                           )}
                           {ingredients.length > 0 && (
                             <button
-                              onClick={() => addToShoppingList(ingredients)}
+                              onClick={() => addToShoppingList(ingredients, wish.name)}
                               className="btn btn-primary"
                               style={{ marginTop: '0.5rem', width: '100%', padding: '0.5rem' }}
                             >

@@ -166,7 +166,14 @@ function ShoppingList() {
                   onChange={() => toggleItem(item.id, item.completed)}
                   className="checkbox"
                 />
-                <span className="item-name">{item.name}</span>
+                <span className="item-name">
+                  {item.name}
+                  {item.meals?.length > 1 && (
+                    <span style={{ fontSize: '0.78rem', color: '#999', marginLeft: '0.4rem' }}>
+                      ({item.meals.join(', ')})
+                    </span>
+                  )}
+                </span>
               </div>
               <button
                 onClick={() => deleteItem(item.id)}
