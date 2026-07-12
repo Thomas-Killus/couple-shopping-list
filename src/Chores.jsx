@@ -21,6 +21,7 @@ const PRESET_CHORES = [
   { name: 'Gießen', points: 3, recurring: true, recurDays: 6 },
   { name: 'Pflanzenpflege', points: 5 },
   { name: 'Workout', points: 3 },
+  { name: 'Gießen Garten', points: 3 },
 ];
 
 const ADD_CHORE_PRIORITY_ORDER = [
