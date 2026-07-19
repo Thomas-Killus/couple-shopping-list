@@ -3,6 +3,7 @@ import ShoppingList from './ShoppingList';
 import Chores from './Chores';
 import Expenses from './Expenses';
 import Calendar from './Calendar';
+import Events from './Events';
 import Stats from './Stats';
 import Meals from './Meals';
 import './App.css';
@@ -49,6 +50,7 @@ function App() {
     { id: 'expenses', label: '💰', component: Expenses },
     { id: 'stats', label: '📊', component: Stats },
     { id: 'calendar', label: '📅', component: Calendar },
+    { id: 'events', label: '🎟️', component: Events },
     { id: 'meals', label: '🍽️', component: Meals },
   ];
 

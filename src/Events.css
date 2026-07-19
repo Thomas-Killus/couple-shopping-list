@@ -1,0 +1,45 @@
+.events-container { width: 100%; }
+.events-header { text-align: center; margin-bottom: 0.75rem; }
+.events-header h2 { font-size: 2rem; margin: 0; background: var(--color-primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+.events-add-btn { width: 100%; margin-bottom: 1rem; }
+
+.events-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.event-item {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: 14px;
+  padding: 0.75rem 0.9rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.event-item:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); }
+
+.event-main { min-width: 0; }
+.event-name { font-weight: 700; color: var(--color-text-primary); font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.event-date { color: var(--color-text-secondary); font-size: 0.8rem; margin-top: 2px; }
+
+.event-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem; flex-shrink: 0; }
+
+.booked-badge { font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.booked-nobody { background: var(--color-bg-secondary); color: var(--color-text-muted); border: 1px solid var(--color-border-light); }
+.booked-chantale { background: var(--color-chantale-light); color: var(--color-chantale-primary); border: 1px solid var(--color-chantale-primary); }
+.booked-thomas { background: var(--color-thomas-light); color: var(--color-thomas-primary); border: 1px solid var(--color-thomas-primary); }
+.booked-both { background: var(--color-both-light); color: var(--color-both-primary); border: 1px solid var(--color-both-primary); }
+
+.paid-pill { font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; cursor: pointer; white-space: nowrap; }
+.paid-pill.is-paid { background: var(--color-both-light); color: var(--color-status-success); border-color: var(--color-status-success); }
+.paid-pill.is-unpaid { background: transparent; color: var(--color-status-error); border-color: var(--color-status-error); }
+
+/* Modal (shared classes defined in Chores/Calendar css) */
+.events-form { background: var(--color-bg-secondary); padding: 1rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.5rem; }
+.events-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.events-row label { font-size: 0.8rem; font-weight: 600; color: var(--color-text-secondary); min-width: 90px; }
+.events-checkbox-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--color-text-primary); cursor: pointer; margin-top: 0.25rem; }
+.events-checkbox-row input { width: 18px; height: 18px; cursor: pointer; }
